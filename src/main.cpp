@@ -23,10 +23,9 @@
 #include <stdlib.h>
 
 #include "gl_canvas2d.h"
+#include "Vector2.h"
 
-//variavel global para selecao do que sera exibido na canvas.
-int screenWidth = 500, screenHeight = 500; //largura e altura inicial da tela . Alteram com o redimensionamento de tela.
-int mouseX, mouseY; //variaveis globais do mouse para poder exibir dentro da render().
+int screenWidth = 500, screenHeight = 500;
 
 // Eixos 
 Vector2 eixoxi = Vector2(-100, 0);
@@ -40,26 +39,14 @@ Vector2 p2 = Vector2(150, 100);
 Vector2 p3 = Vector2(150, 150);
 Vector2 p4 = Vector2(100, 150);
 
-std::vector<Vector2> quadradooriginal = {p1, p2, p3, p4};
+std::vector<Vector2> quadradoOriginal = {p1, p2, p3, p4};
 
 // Nova atualização transladado
-std::vector<Vector2> quadradotransladado;
+std::vector<Vector2> quadradoTransladado;
 
 // Nava atualização escalonado
 std::vector<Vector2> quadradoEscalonado;
 
-void DrawMouseScreenCoords()
-{
-    char str[100];
-    sprintf(str, "Mouse: (%d,%d)", mouseX, mouseY);
-    CV::text(10,300, str);
-    sprintf(str, "Screen: (%d,%d)", screenWidth, screenHeight);
-    CV::text(10,320, str);
-}
-
-//funcao chamada continuamente. Deve-se controlar o que desenhar por meio de variaveis globais
-//Todos os comandos para desenho na canvas devem ser chamados dentro da render().
-//Deve-se manter essa fun��o com poucas linhas de codigo.
 void render()
 {
    CV::translate(100, 100);
@@ -70,92 +57,65 @@ void render()
    CV::line(eixoyi, eixoyf);
 
    // Printa o quadrado original
-   // Cria o vetor de valores dos pontos
-   std::vector<float> xpolyor;
-   std::vector<float> ypolyor;
-   for(auto p : quadradooriginal){
-      xpolyor.push_back(p.x);
-      ypolyor.push_back(p.y);
-   }
-
-   // Printa
    CV::color(1, 0, 0);
-   CV::polygon(xpolyor.data(), ypolyor.data(), xpolyor.size());
-
-   // Cria o vetor transladado
-   std::vector<float> xpolynovo;
-   std::vector<float> ypolynovo;
-   for(auto p: quadradotransladado){
-      xpolynovo.push_back(p.x);
-      ypolynovo.push_back(p.y);
-   }
-
-   // Transladado
+   desenhaQuadrado(quadradoOriginal);
+   
+   // Aplica a translação ao vetor original
+   quadradoTransladado.clear();
+   quadradoTransladado = translada(quadradoOriginal, Vector2(0, 0));
    CV::color(0, 1, 0);
-   CV::polygon(xpolynovo.data(), ypolynovo.data(), xpolynovo.size());
+   desenhaQuadrado(quadradoTransladado);
 
-   // Cria o vetor escalado
-   std::vector<float> xpolyEscala;
-   std::vector<float> ypolyEscala;
-   for(auto p: quadradoEscalonado){
-      xpolyEscala.push_back(p.x);
-      ypolyEscala.push_back(p.y);
-   }
-
-   // Escalonado
+   // Aplica a escala ao vetor tranladado
+   quadradoEscalonado.clear();
+   quadradoEscalonado = escalona(quadradoTransladado, 2);
    CV::color(0, 1, 1);
-   CV::polygon(xpolyEscala.data(), ypolyEscala.data(), xpolyEscala.size());
+   desenhaQuadrado(quadradoEscalonado);
 }
 
-//funcao chamada toda vez que uma tecla for pressionada.
-void keyboard(int key)
-{
-   //printf("\nTecla: %d" , key);
-
-   switch(key)
-   {
+void desenhaQuadrado(std::vector<Vector2> pontos) {
+   for(unsigned int i = 0; i < pontos.size(); i++){
+      if(i == pontos.size() - 1){
+         CV::line(pontos[i], pontos[0]);
+      }else{
+         CV::line(pontos[i], pontos[i + 1]);
+      }
    }
 }
 
-//funcao chamada toda vez que uma tecla for liberada
-void keyboardUp(int key)
-{
-   //printf("\nLiberou: %d" , key);
-}
 
-//funcao para tratamento de mouse: cliques, movimentos e arrastos
-void mouse(int button, int state, int wheel, int direction, int x, int y)
-{
-   mouseX = x; //guarda as coordenadas do mouse para exibir dentro da render()
-   mouseY = y;
-
-   //printf("\nmouse %d %d %d %d %d %d", button, state, wheel, direction,  x, y);
-
-}
-
-void translada() {
-   // Calcula o centro
-   Vector2 centroOriginal = Vector2((p1.x + p2.x) / 2, (p2.y + p3.y) / 2);
-   // Distancia em x e y
-   Vector2 origem = Vector2(0, 0);
-   float distx = origem.x - centroOriginal.x;
-   float disty = origem.y - centroOriginal.y;
-
-   Vector2 aux;
-   // Coloca os novos pontos no quadradotransladado
-   quadradotransladado.clear();
-   for (auto p : quadradooriginal) {
-      aux.x = p.x + distx;
-      aux.y = p.y + disty; 
-      quadradotransladado.push_back(aux);
+std::vector<Vector2> translada(std::vector<Vector2> pontos, Vector2 destino) {
+   // Calcula o centro dos pontos
+   Vector2 centroOriginal = Vector2(0, 0);
+   for(auto ponto: pontos){
+      centroOriginal.x += ponto.x;
+      centroOriginal.y += ponto.y;
    }
+   centroOriginal.x /= pontos.size();
+   centroOriginal.y /= pontos.size();
+   
+   // Distancia em x e y do destino
+   float distx = destino.x - centroOriginal.x;
+   float disty = destino.y - centroOriginal.y;
+
+   std::vector<Vector2> vetorAuxliar;
+   // Move os pontos e coloca no vetor auxiliar
+   for (auto p : pontos) {
+      Vector2 pontoAuxiliar;
+      pontoAuxiliar.x = p.x + distx;
+      pontoAuxiliar.y = p.y + disty; 
+      vetorAuxliar.push_back(pontoAuxiliar);
+   }
+
+   // Retorna todos os pontos
+   return vetorAuxliar;
 }
 
 void escala(float escala) {
    Vector2 aux;
-   // Coloca os novos pontos no quadradotransladado
+   // Coloca os novos pontos no quadradoTransladado
    quadradoEscalonado.clear();
-   for (auto p : quadradotransladado) {
+   for (auto p : quadradoTransladado) {
       aux.x = p.x * escala;
       aux.y = p.y * escala; 
       quadradoEscalonado.push_back(aux);
@@ -171,9 +131,6 @@ void rotaciona(Vector2 ponto, float angulo) {
 
 int main(void)
 {
-   CV::init(&screenWidth, &screenHeight, "Titulo da Janela: Canvas 2D - Pressione 1, 2, 3");
-   std::cout << std::endl;
-   translada();
-   escala(2);
+   CV::init(&screenWidth, &screenHeight, "Execicio de Transformações - Deivis");
    CV::run();
 }
