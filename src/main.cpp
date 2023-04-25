@@ -47,32 +47,9 @@ std::vector<Vector2> quadradoTransladado;
 // Nava atualização escalonado
 std::vector<Vector2> quadradoEscalonado;
 
-void render()
-{
-   CV::translate(100, 100);
-   CV::color(0, 0, 0);
-   
-   // Printa os eixos
-   CV::line(eixoxi, eixoxf);
-   CV::line(eixoyi, eixoyf);
-
-   // Printa o quadrado original
-   CV::color(1, 0, 0);
-   desenhaQuadrado(quadradoOriginal);
-   
-   // Aplica a translação ao vetor original
-   quadradoTransladado.clear();
-   quadradoTransladado = translada(quadradoOriginal, Vector2(0, 0));
-   CV::color(0, 1, 0);
-   desenhaQuadrado(quadradoTransladado);
-
-   // Aplica a escala ao vetor tranladado
-   quadradoEscalonado.clear();
-   quadradoEscalonado = escalona(quadradoTransladado, 2);
-   CV::color(0, 1, 1);
-   desenhaQuadrado(quadradoEscalonado);
-}
-
+/**
+ * Desenha o quadrado usando retas, apenas com os pontos do quadrado
+*/
 void desenhaQuadrado(std::vector<Vector2> pontos) {
    for(unsigned int i = 0; i < pontos.size(); i++){
       if(i == pontos.size() - 1){
@@ -83,7 +60,9 @@ void desenhaQuadrado(std::vector<Vector2> pontos) {
    }
 }
 
-
+/**
+ * Recebe um vetor de pontos e move para um destino, depois retorna um novo vetor de pontos
+*/
 std::vector<Vector2> translada(std::vector<Vector2> pontos, Vector2 destino) {
    // Calcula o centro dos pontos
    Vector2 centroOriginal = Vector2(0, 0);
@@ -111,15 +90,19 @@ std::vector<Vector2> translada(std::vector<Vector2> pontos, Vector2 destino) {
    return vetorAuxliar;
 }
 
-void escala(float escala) {
-   Vector2 aux;
-   // Coloca os novos pontos no quadradoTransladado
-   quadradoEscalonado.clear();
-   for (auto p : quadradoTransladado) {
-      aux.x = p.x * escala;
-      aux.y = p.y * escala; 
-      quadradoEscalonado.push_back(aux);
+/**
+ * Recebe um vetor de pontos e escalona os pontos baseado no fator de escala
+*/
+std::vector<Vector2> escalona(std::vector<Vector2> pontos, float escala) {
+   std::vector<Vector2> vetorAuxiliar;
+   for (auto ponto : pontos) {
+      Vector2 pontoAux;
+      pontoAux.x = ponto.x * escala;
+      pontoAux.y = ponto.y * escala; 
+      vetorAuxiliar.push_back(pontoAux);
    }
+   // Retorna o vetor escalonado
+   return vetorAuxiliar;
 }
 
 void rotaciona(Vector2 ponto, float angulo) {
@@ -127,6 +110,32 @@ void rotaciona(Vector2 ponto, float angulo) {
    float senn = sin(angulo);
 
    
+}
+
+void render()
+{
+   CV::translate(100, 100);
+   CV::color(0, 0, 0);
+   
+   // Printa os eixos
+   CV::line(eixoxi, eixoxf);
+   CV::line(eixoyi, eixoyf);
+
+   // Printa o quadrado original
+   CV::color(1, 0, 0);
+   desenhaQuadrado(quadradoOriginal);
+   
+   // Aplica a translação ao vetor original
+   quadradoTransladado.clear();
+   quadradoTransladado = translada(quadradoOriginal, Vector2(0, 0));
+   CV::color(0, 1, 0);
+   desenhaQuadrado(quadradoTransladado);
+
+   // Aplica a escala ao vetor tranladado
+   quadradoEscalonado.clear();
+   quadradoEscalonado = escalona(quadradoTransladado, 2);
+   CV::color(0, 1, 1);
+   desenhaQuadrado(quadradoEscalonado);
 }
 
 int main(void)
