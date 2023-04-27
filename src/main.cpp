@@ -26,6 +26,7 @@
 #include "Vector2.h"
 
 int screenWidth = 500, screenHeight = 500;
+int mouseX, mouseY; //variaveis globais do mouse para poder exibir dentro da render().
 
 // Eixos 
 Vector2 eixoxi = Vector2(-100, 0);
@@ -112,6 +113,7 @@ void rotaciona(Vector2 ponto, float angulo) {
    
 }
 
+
 void render()
 {
    CV::translate(100, 100);
@@ -136,6 +138,32 @@ void render()
    quadradoEscalonado = escalona(quadradoTransladado, 2);
    CV::color(0, 1, 1);
    desenhaQuadrado(quadradoEscalonado);
+}
+
+//funcao chamada toda vez que uma tecla for pressionada.
+void keyboard(int key)
+{
+   //printf("\nTecla: %d" , key);
+
+   switch(key)
+   {
+   }
+}
+
+//funcao chamada toda vez que uma tecla for liberada
+void keyboardUp(int key)
+{
+   //printf("\nLiberou: %d" , key);
+}
+
+//funcao para tratamento de mouse: cliques, movimentos e arrastos
+void mouse(int button, int state, int wheel, int direction, int x, int y)
+{
+   mouseX = x; //guarda as coordenadas do mouse para exibir dentro da render()
+   mouseY = y;
+
+   //printf("\nmouse %d %d %d %d %d %d", button, state, wheel, direction,  x, y);
+
 }
 
 int main(void)
