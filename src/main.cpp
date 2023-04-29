@@ -168,6 +168,6 @@ void mouse(int button, int state, int wheel, int direction, int x, int y)
 
 int main(void)
 {
-   CV::init(&screenWidth, &screenHeight, "Execicio de Transformações - Deivis");
+   CV::init(&screenWidth, &screenHeight, "Execicio de Transformacoes - Deivis");
    CV::run();
 }
