@@ -1,17 +1,6 @@
-/*********************************************************************
-// Canvas para desenho, criada sobre a API OpenGL. Nao eh necessario conhecimentos de OpenGL para usar.
-//  Autor: Cesar Tadeu Pozzer
-//         05/2020
-//
-//  Pode ser utilizada para fazer desenhos, animacoes, e jogos simples.
-//  Tem tratamento de mouse e teclado
-//  Estude o OpenGL antes de tentar compreender o arquivo gl_canvas.cpp
-//
-//  Versao 2.0
-//
-//  Instru��es:
-//	  Para alterar a animacao, digite numeros entre 1 e 3
-// *********************************************************************/
+/**
+ * Fiz apenas um exercicio da prova
+*/
 
 #include <GL/glut.h>
 #include <GL/freeglut_ext.h> //callback da wheel do mouse.
@@ -47,6 +36,9 @@ std::vector<Vector2> quadradoTransladado;
 
 // Nava atualização escalonado
 std::vector<Vector2> quadradoEscalonado;
+
+// Nova atualização retação
+std::vector<Vector2> quadradoRotacionado;
 
 /**
  * Desenha o quadrado usando retas, apenas com os pontos do quadrado
@@ -124,19 +116,25 @@ void render()
    CV::line(eixoyi, eixoyf);
 
    // Printa o quadrado original
-   CV::color(1, 0, 0);
+   CV::color(1, 0, 0); // Vermelho
    desenhaQuadrado(quadradoOriginal);
    
    // Aplica a translação ao vetor original
    quadradoTransladado.clear();
    quadradoTransladado = translada(quadradoOriginal, Vector2(0, 0));
-   CV::color(0, 1, 0);
+   CV::color(0, 1, 0); // Verde
    desenhaQuadrado(quadradoTransladado);
 
    // Aplica a escala ao vetor tranladado
    quadradoEscalonado.clear();
    quadradoEscalonado = escalona(quadradoTransladado, 2);
-   CV::color(0, 1, 1);
+   CV::color(0, 1, 1); // Verde marinho
+   desenhaQuadrado(quadradoEscalonado);
+
+   // Aplica a rotação ao vetor escalonado
+   quadradoRotacionado.clear();
+   quadradoRotacionado = retaciona(quadradoEscalonado, 45);
+   CV::color(1, 0, 1);
    desenhaQuadrado(quadradoEscalonado);
 }
 
