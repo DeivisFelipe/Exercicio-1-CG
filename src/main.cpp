@@ -98,11 +98,26 @@ std::vector<Vector2> escalona(std::vector<Vector2> pontos, float escala) {
    return vetorAuxiliar;
 }
 
-void rotaciona(Vector2 ponto, float angulo) {
+std::vector<Vector2> rotaciona(std::vector<Vector2> pontos, float angulo) {
+   // Calcula o centro dos pontos
+   Vector2 centro = Vector2(0, 0);
+   for(auto ponto: pontos) {
+      centro = centro + ponto;
+   }
+   centro.x /= pontos.size();
+   centro.y /= pontos.size();
+   // Calcula um vetor de distancia até o centro
+   Vector2 distancia = Vector2(0, 0) - centro;
    float cosn = cos(angulo);
    float senn = sin(angulo);
 
-   
+   std::vector<Vector2> vetorAuxiliar;
+   for(auto ponto: pontos) {
+
+   }
+
+   // Retorna o vetor auxiliar
+   return vetorAuxiliar;
 }
 
 
