@@ -14,6 +14,8 @@
 #include "gl_canvas2d.h"
 #include "Vector2.h"
 
+#define M_PI 3.14159265358979323846
+
 int screenWidth = 500, screenHeight = 500;
 int mouseX, mouseY; //variaveis globais do mouse para poder exibir dentro da render().
 
@@ -108,12 +110,21 @@ std::vector<Vector2> rotaciona(std::vector<Vector2> pontos, float angulo) {
    centro.y /= pontos.size();
    // Calcula um vetor de distancia até o centro
    Vector2 distancia = Vector2(0, 0) - centro;
+   // Passa o angulo de radianos para graus
+   angulo = angulo * (M_PI / 180);
    float cosn = cos(angulo);
-   float senn = sin(angulo);
+   float sinn = sin(angulo);
 
    std::vector<Vector2> vetorAuxiliar;
    for(auto ponto: pontos) {
-
+      Vector2 pontoAuxliar;
+      pontoAuxliar = ponto + distancia;
+      float x = pontoAuxliar.x;
+      float y = pontoAuxliar.y;
+      pontoAuxliar.x = (x * cosn) - (y * sinn);
+      pontoAuxliar.y = (x * sinn) + (y * cosn);
+      pontoAuxliar = pontoAuxliar - distancia;
+      vetorAuxiliar.push_back(pontoAuxliar);
    }
 
    // Retorna o vetor auxiliar
@@ -148,9 +159,9 @@ void render()
 
    // Aplica a rotação ao vetor escalonado
    quadradoRotacionado.clear();
-   quadradoRotacionado = retaciona(quadradoEscalonado, 45);
-   CV::color(1, 0, 1);
-   desenhaQuadrado(quadradoEscalonado);
+   quadradoRotacionado = rotaciona(quadradoEscalonado, 45);
+   CV::color(1, 0, 1); // Roxo
+   desenhaQuadrado(quadradoRotacionado);
 }
 
 //funcao chamada toda vez que uma tecla for pressionada.
